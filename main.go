@@ -37,7 +37,7 @@ type episodeList struct {
 func main() {
 	tmdbID := os.Args
 
-	seasonListURL := baseURL + tmdbID[0]
+	seasonListURL := baseURL + tmdbID[1]
 	seasons, err := getJSON[seasonList](seasonListURL)
 	if err != nil {
 		log.Fatalf("Error: %v", err)
@@ -50,11 +50,13 @@ func main() {
 			log.Fatalf("Error: %v", err)
 		}
 
+		episodeNum := 1
 		for _, episode := range episodes.Episodes {
-			err := writeNFO(seasons.Name, season.SeasonNumber, episode.EpisodeNum, seasons.ID)
+			err := writeNFO(seasons.Name, season.SeasonNumber, episodeNum, episode.Name, episode.ID)
 			if err != nil {
 				log.Fatalf("Error: %v", err)
 			}
+			episodeNum += 1
 		}
 	}
 	fmt.Println("Successfully wrote all NFO files.")

@@ -5,32 +5,43 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
-func writeNFO(name string, season int, episode int, id int) error {
-	type metadata struct {
-		ID      int    `xml:"tvshow>uniqueid"`
-		Type    string `xml:"tvshow>type,attr"`
-		Default bool   `xml:"tvshow>default,attr"`
-		Title   string `xml:"tvshow>title"`
-		Season  int    `xml:"tvshow>season"`
-		Episode int    `xml:"tvshow>episode"`
+func writeNFO(seriesName string, season int, episode int, episodeName string, id int) error {
+	type UniqueID struct {
+		Type    string `xml:"type,attr"`
+		Default bool   `xml:"default,attr"`
+		Value   int    `xml:",chardata"`
 	}
+
+	type metadata struct {
+		XMLName xml.Name `xml:"tvshow"`
+
+		ID      UniqueID `xml:"uniqueid"`
+		Title   string   `xml:"title"`
+		Season  int      `xml:"season"`
+		Episode int      `xml:"episode"`
+	}
+
 	seasonNum := "0" + strconv.Itoa(season)
 	if season > 9 {
 		seasonNum = "" + strconv.Itoa(season)
 	}
 	episodeNum := "0" + strconv.Itoa(episode)
 	if episode > 9 {
-		seasonNum = "" + strconv.Itoa(episode)
+		episodeNum = "" + strconv.Itoa(episode)
 	}
-	fileName := name + " - s" + seasonNum + "e" + episodeNum + ".nfo"
+	fileName := seriesName + " - s" + seasonNum + "e" + episodeNum + ".nfo"
+	fileName = strings.NewReplacer(":", "").Replace(fileName)
 
 	showMetadata := metadata{
-		ID:      id,
-		Type:    "tmdb",
-		Default: true,
-		Title:   name,
+		ID: UniqueID{
+			Type:    "tmdv",
+			Default: true,
+			Value:   id,
+		},
+		Title:   episodeName,
 		Season:  season,
 		Episode: episode,
 	}
