@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -50,16 +51,11 @@ func main() {
 		}
 
 		for _, episode := range episodes.Episodes {
-			seasonNum := "0" + strconv.Itoa(season.SeasonNumber)
-			if season.SeasonNumber > 9 {
-				seasonNum = "" + strconv.Itoa(season.SeasonNumber)
+			err := writeNFO(seasons.Name, season.SeasonNumber, episode.EpisodeNum, seasons.ID)
+			if err != nil {
+				log.Fatalf("Error: %v", err)
 			}
-			episodeNum := "0" + strconv.Itoa(episode.EpisodeNum)
-			if episode.EpisodeNum > 9 {
-				seasonNum = "" + strconv.Itoa(episode.EpisodeNum)
-			}
-			fileName := seasons.Name + " - s" + seasonNum + "e" + episodeNum + ".nfo"
 		}
 	}
-
+	fmt.Println("Successfully wrote all NFO files.")
 }
