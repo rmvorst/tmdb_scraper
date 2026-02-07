@@ -32,12 +32,12 @@ func writeNFO(seriesName string, season int, episode int, episodeName string, id
 	if episode > 9 {
 		episodeNum = "" + strconv.Itoa(episode)
 	}
-	fileName := seriesName + " - s" + seasonNum + "e" + episodeNum + ".nfo"
+	fileName := "/data/tor/NFOs/" + seriesName + " - s" + seasonNum + "e" + episodeNum + ".nfo"
 	fileName = strings.NewReplacer(":", "").Replace(fileName)
 
 	showMetadata := metadata{
 		ID: UniqueID{
-			Type:    "tmdv",
+			Type:    "tmdb",
 			Default: true,
 			Value:   id,
 		},
