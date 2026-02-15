@@ -10,6 +10,7 @@ import (
 )
 
 const baseURL = "https://api.themoviedb.org/3/tv/"
+const envPath = "/data/projects/tmdb_scraper/.env"
 
 type seasonList struct {
 	Name        string `json:"name"`
@@ -45,7 +46,8 @@ func main() {
 	if len(os.Args) < 2 {
 		log.Fatal("Example usage: go run . <show_id> <num_episodes_season_1> <num_episodes_season_2> ...")
 	}
-	godotenv.Load()
+	godotenv.Load(envPath)
+
 	cfg := envConfig{
 		apiKey:  os.Getenv("API_KEY"),
 		rootNFO: os.Getenv("NFO_ROOT"),
