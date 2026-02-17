@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func writeNFO(seriesName string, season int, episode int, episodeName string, id int) error {
+func writeNFO(seriesName, episodeName, summary string, season, episode, id int) error {
 	type UniqueID struct {
 		Type    string `xml:"type,attr"`
 		Default bool   `xml:"default,attr"`
@@ -22,6 +22,7 @@ func writeNFO(seriesName string, season int, episode int, episodeName string, id
 		Title   string   `xml:"title"`
 		Season  int      `xml:"season"`
 		Episode int      `xml:"episode"`
+		Plot    string   `xml:"plot"`
 	}
 
 	seasonNum := "0" + strconv.Itoa(season)
@@ -44,6 +45,7 @@ func writeNFO(seriesName string, season int, episode int, episodeName string, id
 		Title:   episodeName,
 		Season:  season,
 		Episode: episode,
+		Plot:    summary,
 	}
 	xmlBytes, err := xml.MarshalIndent(showMetadata, "", "    ")
 	if err != nil {

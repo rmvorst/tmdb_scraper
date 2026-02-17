@@ -87,7 +87,7 @@ seasonLoop:
 		}
 
 		for _, episode := range episodes.Episodes {
-			err := writeNFO(seasons.Name, seasonNum, episodeNum, episode.Name, episode.ID)
+			err := writeNFO(seasons.Name, episode.Name, episode.Summary, seasonNum, episodeNum, episode.ID)
 			if err != nil {
 				log.Fatalf("Error: %v\n", err)
 			}
