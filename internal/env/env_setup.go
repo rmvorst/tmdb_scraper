@@ -13,7 +13,7 @@ type EnvConfig struct {
 	RootNFO string
 }
 
-func SetupEnvDir() error {
+func SetupEnv() error {
 	envPath, err := GetEnvPath()
 	if err != nil {
 		return fmt.Errorf("Error: Cannot get env path")
@@ -24,10 +24,15 @@ func SetupEnvDir() error {
 		return fmt.Errorf("Error: Cannot make tmdb_scraper dir in ~/.config")
 	}
 
+	err = setupEnvFile()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func SetupEnvFile() error {
+func setupEnvFile() error {
 	fpath, err := GetEnvPath()
 
 	if err != nil {

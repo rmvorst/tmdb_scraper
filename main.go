@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -10,6 +11,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/rmvorst/tmdb_scraper/internal/api"
 	"github.com/rmvorst/tmdb_scraper/internal/env"
+	"github.com/rmvorst/tmdb_scraper/internal/writers"
 )
 
 const baseURL = "https://api.themoviedb.org/3/tv/"
@@ -23,12 +25,7 @@ func main() {
 		log.Fatal("Example usage: go run . <show_id> <num_episodes_season_1> <num_episodes_season_2> ...")
 	}
 
-	err := env.SetupEnvDir()
-	if err != nil {
-		logFatal(err)
-	}
-
-	err = env.SetupEnvFile()
+	err := env.SetupEnv()
 	if err != nil {
 		logFatal(err)
 	}
@@ -45,17 +42,19 @@ func main() {
 		RootNFO: os.Getenv("NFO_ROOT"),
 	}
 
-	err = os.RemoveAll(cfg.RootNFO)
-	if err != nil {
-		logFatal(err)
-	}
-	err = os.Mkdir(cfg.RootNFO, 0755)
+	err = writers.ResetNFO(cfg.RootNFO)
 	if err != nil {
 		logFatal(err)
 	}
 
-	tmdbID := os.Args[1]
-	episodeNumOverride := os.Args[2:]
+	// Define flags (name, default, description)
+	seasonFlag := flag.Int("season", 0, "Season Number")
+	episodeFlag := flag.Int("episode", 0, "Episode Number")
+	flag.Parse()
+	args := flag.Args()
+
+	tmdbID := args[1]
+	episodeNumOverride := args[2:]
 	numSeasons := len(episodeNumOverride)
 	overrideIDX := 0
 
@@ -71,6 +70,7 @@ func main() {
 	}
 	seasonNum := 1
 	episodeNum := 1
+
 seasonLoop:
 	for _, season := range seasons.Seasons {
 		episodeListURL := seasonListURL + "/season/" + strconv.Itoa(season.SeasonNumber)
@@ -80,7 +80,7 @@ seasonLoop:
 		}
 
 		for _, episode := range episodes.Episodes {
-			err := writeNFO(seasons.Name, episode.Name, episode.Summary, cfg.RootNFO, seasonNum, episodeNum, episode.ID)
+			err := writers.WriteNFO(seasons.Name, episode.Name, episode.Summary, cfg.RootNFO, seasonNum, episodeNum, episode.ID)
 			if err != nil {
 				log.Fatalf("Error: %v\n", err)
 			}
