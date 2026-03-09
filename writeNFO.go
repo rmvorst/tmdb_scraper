@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func writeNFO(seriesName, episodeName, summary string, season, episode, id int) error {
+func writeNFO(seriesName, episodeName, summary, fpath string, season, episode, id int) error {
 	type UniqueID struct {
 		Type    string `xml:"type,attr"`
 		Default bool   `xml:"default,attr"`
@@ -33,7 +33,7 @@ func writeNFO(seriesName, episodeName, summary string, season, episode, id int) 
 	if episode > 9 {
 		episodeNum = "" + strconv.Itoa(episode)
 	}
-	fileName := "/data/tor/NFOs/" + seriesName + " - s" + seasonNum + "e" + episodeNum + ".nfo"
+	fileName := fpath + "/" + seriesName + " - s" + seasonNum + "e" + episodeNum + ".nfo"
 	fileName = strings.NewReplacer(":", "").Replace(fileName)
 
 	showMetadata := metadata{

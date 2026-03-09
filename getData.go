@@ -5,16 +5,18 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/rmvorst/tmdb_scraper/internal/env"
 )
 
-func getJSON[T any](url string, cfg envConfig) (*T, error) {
+func getJSON[T any](url string, cfg env.EnvConfig) (*T, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		fmt.Println("Error creating new GET request")
 		return nil, err
 	}
 	req.Header.Add("accept", "application/json")
-	req.Header.Add("Authorization", "Bearer "+cfg.apiKey)
+	req.Header.Add("Authorization", "Bearer "+cfg.ApiKey)
 
 	var client http.Client
 	resp, err := client.Do(req)

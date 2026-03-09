@@ -4,61 +4,54 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/joho/godotenv"
+	"github.com/rmvorst/tmdb_scraper/internal/api"
+	"github.com/rmvorst/tmdb_scraper/internal/env"
 )
 
 const baseURL = "https://api.themoviedb.org/3/tv/"
-const envPath = "/data/projects/tmdb_scraper/.env"
 
-type seasonList struct {
-	Name        string `json:"name"`
-	NumEpisodes int    `json:"number_of_episodes"`
-	NumSeasons  int    `json:"number_of_seasons"`
-	ID          int    `json:"id"`
-	Seasons     []struct {
-		AirDate      string `json:"air_date"`
-		NumEpisodes  int    `json:"episode_count"`
-		ID           int    `json:"id"`
-		Name         string `json:"name"`
-		Overview     string `json:"overview"`
-		SeasonNumber int    `json:"season_number"`
-	} `json:"seasons"`
-}
-
-type episodeList struct {
-	Episodes []struct {
-		AirDate    string `json:"air_date"`
-		EpisodeNum int    `json:"episode_number"`
-		ID         int    `json:"id"`
-		Name       string `json:"name"`
-		Summary    string `json:"overview"`
-	}
-}
-
-type envConfig struct {
-	apiKey  string
-	rootNFO string
+func logFatal(err error) {
+	log.Fatalf("Error: %s\n", err)
 }
 
 func main() {
 	if len(os.Args) < 2 {
 		log.Fatal("Example usage: go run . <show_id> <num_episodes_season_1> <num_episodes_season_2> ...")
 	}
-	godotenv.Load(envPath)
 
-	cfg := envConfig{
-		apiKey:  os.Getenv("API_KEY"),
-		rootNFO: os.Getenv("NFO_ROOT"),
-	}
-	err := os.RemoveAll(cfg.rootNFO)
+	err := env.SetupEnvDir()
 	if err != nil {
-		log.Fatalf("Error: %v\n", err)
+		logFatal(err)
 	}
-	err = os.Mkdir(cfg.rootNFO, 0755)
+
+	err = env.SetupEnvFile()
 	if err != nil {
-		log.Fatalf("Error: %v\n", err)
+		logFatal(err)
+	}
+
+	envPath, err := env.GetEnvPath()
+	if err != nil {
+		logFatal(err)
+	}
+	envFPath := filepath.Join(envPath, ".env")
+	godotenv.Load(envFPath)
+
+	cfg := env.EnvConfig{
+		ApiKey:  os.Getenv("API_KEY"),
+		RootNFO: os.Getenv("NFO_ROOT"),
+	}
+
+	err = os.RemoveAll(cfg.RootNFO)
+	if err != nil {
+		logFatal(err)
+	}
+	err = os.Mkdir(cfg.RootNFO, 0755)
+	if err != nil {
+		logFatal(err)
 	}
 
 	tmdbID := os.Args[1]
@@ -67,7 +60,7 @@ func main() {
 	overrideIDX := 0
 
 	seasonListURL := baseURL + tmdbID
-	seasons, err := getJSON[seasonList](seasonListURL, cfg)
+	seasons, err := getJSON[api.SeasonList](seasonListURL, cfg)
 	if err != nil {
 		log.Fatalf("Error: %v\n", err)
 	}
@@ -81,13 +74,13 @@ func main() {
 seasonLoop:
 	for _, season := range seasons.Seasons {
 		episodeListURL := seasonListURL + "/season/" + strconv.Itoa(season.SeasonNumber)
-		episodes, err := getJSON[episodeList](episodeListURL, cfg)
+		episodes, err := getJSON[api.EpisodeList](episodeListURL, cfg)
 		if err != nil {
 			log.Fatalf("Error: %v\n", err)
 		}
 
 		for _, episode := range episodes.Episodes {
-			err := writeNFO(seasons.Name, episode.Name, episode.Summary, seasonNum, episodeNum, episode.ID)
+			err := writeNFO(seasons.Name, episode.Name, episode.Summary, cfg.RootNFO, seasonNum, episodeNum, episode.ID)
 			if err != nil {
 				log.Fatalf("Error: %v\n", err)
 			}
