@@ -53,10 +53,9 @@ func main() {
 	flag.Parse()
 	args := flag.Args()
 
-	tmdbID := args[1]
-	episodeNumOverride := args[2:]
-	numSeasons := len(episodeNumOverride)
-	overrideIDX := 0
+	// Get the tmdb-id and episode number overrides from args
+	tmdbID := args[0]
+	episodeNumOverride := args[1:]
 
 	seasonListURL := baseURL + tmdbID
 	seasons, err := getJSON[api.SeasonList](seasonListURL, cfg)
@@ -64,13 +63,18 @@ func main() {
 		log.Fatalf("Error: %v\n", err)
 	}
 
-	seasonEpisodeNums, err := strconv.Atoi(episodeNumOverride[overrideIDX])
+	seasonEpisodeNums, err := strconv.Atoi(episodeNumOverride[0])
 	if err != nil {
 		log.Fatalf("Error: %v\n", err)
 	}
+
+	// Set loop initial conditions
 	seasonNum := 1
 	episodeNum := 1
+	numSeasons := len(episodeNumOverride)
+	overrideIDX := 0
 
+	// Start the loop
 seasonLoop:
 	for _, season := range seasons.Seasons {
 		episodeListURL := seasonListURL + "/season/" + strconv.Itoa(season.SeasonNumber)
@@ -80,10 +84,15 @@ seasonLoop:
 		}
 
 		for _, episode := range episodes.Episodes {
-			err := writers.WriteNFO(seasons.Name, episode.Name, episode.Summary, cfg.RootNFO, seasonNum, episodeNum, episode.ID)
-			if err != nil {
-				log.Fatalf("Error: %v\n", err)
+			if checkFlag(seasonNum, seasonFlag) {
+				if checkFlag(episodeNum, episodeFlag) {
+					err := writers.WriteNFO(seasons.Name, episode.Name, episode.Summary, cfg.RootNFO, seasonNum, episodeNum, episode.ID)
+					if err != nil {
+						log.Fatalf("Error: %v\n", err)
+					}
+				}
 			}
+
 			episodeNum += 1
 			if episodeNum > seasonEpisodeNums {
 				overrideIDX += 1
@@ -100,4 +109,13 @@ seasonLoop:
 		}
 	}
 	fmt.Println("Successfully wrote all NFO files.")
+}
+
+func checkFlag(num int, flag *int) bool {
+	switch *flag {
+	case 0, num:
+		return true
+	default:
+		return false
+	}
 }

@@ -40,7 +40,6 @@ func setupEnvFile() error {
 	}
 
 	envFPath := filepath.Join(fpath, ".env")
-	fmt.Println(envFPath)
 	file, _ := os.OpenFile(envFPath, os.O_RDWR|os.O_CREATE, 0755)
 
 	defer file.Close()

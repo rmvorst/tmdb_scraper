@@ -75,7 +75,7 @@ func WriteNFO(seriesName, episodeName, summary, fpath string, season, episode, i
 }
 
 func cleanFname(fname string) string {
-	strings.NewReplacer(":", "").Replace(fname)
+	fname = strings.NewReplacer(":", "").Replace(fname)
 
 	return fname
 }
