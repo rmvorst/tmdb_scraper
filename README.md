@@ -1,15 +1,19 @@
 # tmdb_scraper
 
+## Description
+
 This tool is intended to download episode information from the movie db (tmdb) and write the info into an NFO file for use in Kodi or Jellyfin. Optional flags allow for a user to specify the season number or episode number (or both) for a more targetted execution.
 
 ## Motivation
 
 tmdb_scraper was built to fix issues that arise from Jellyfin's automated metadata creation algorithms. Some seasons, especially with anime, are not entered into tmdb correctly. This creates some issues with a user's expected folder structure once adding the shows to Jellyfin. You either comply with tmdb and let yourself be confuesed by what season and episode you are really on, or you define the metadata yourself manually. To automate the manual fix as best as possible, this tool was written to create the NFO files which are used by Jellyfin to correct the metadata that was scraped incorrectly. 
 
-## Installation
+## Quick Start
+
+### Installation
 `go install github.com/rmvorst/tmbd_scraper@latest`
 
-## Prerequisites
+### Prerequisites
 User must already have a tmdb api key. This should be stored in the .env file as API_KEY
 
 ## Usage
@@ -49,6 +53,25 @@ Optional flags are:
 28 is the number of episodes in season 1
 
 10 is the number of episodes in season 2
+
+## Contributing
+
+### Clone the repo
+
+```bash
+git clone https://github.com/rmvorst/tmdb_scraper
+cd tmdb_scraper
+```
+
+### Build the compiled binary
+
+```bash
+go build
+```
+
+### Submit a pull request
+
+If you'd like to contribute, please fork the repository and open a pull request to the `main` branch.
 
 ## Output
 
