@@ -50,6 +50,7 @@ func main() {
 	// Define flags (name, default, description)
 	seasonFlag := flag.Int("season", 0, "Season Number")
 	episodeFlag := flag.Int("episode", 0, "Episode Number")
+	specialsFlag := flag.Bool("specials", false, "Specials Boolean")
 	flag.Parse()
 	args := flag.Args()
 
@@ -73,6 +74,10 @@ func main() {
 	episodeNum := 1
 	numSeasons := len(episodeNumOverride)
 	overrideIDX := 0
+
+	if *specialsFlag {
+		seasonNum -= 1
+	}
 
 	// Start the loop
 seasonLoop:
