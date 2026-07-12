@@ -60,7 +60,7 @@ Optional flags are:
 
 ### Read and write to an NFO the metadata of episode 10 from season 3 of the show with tmdb-id of 82684 to a defined location. There are specials in this series.
 
-`tmdb_scraper --season 3 --episode 10 --specials --output "/path/to/output" 82684 16 24 24 24 24
+`tmdb_scraper --season 3 --episode 10 --specials --output "/path/to/output" 82684 16 24 24 24 24`
 
 82684 is the tmdb-id of the show being accessed
 
