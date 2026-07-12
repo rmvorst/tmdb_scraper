@@ -10,7 +10,7 @@ import (
 )
 
 func ResetNFO(fpath string) error {
-	err = os.MkdirAll(fpath, 0755)
+	err := os.MkdirAll(fpath, 0755)
 	if err != nil {
 		return fmt.Errorf("Error: Cannot make NFO Directory")
 	}
