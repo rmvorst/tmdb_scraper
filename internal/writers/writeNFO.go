@@ -10,11 +10,7 @@ import (
 )
 
 func ResetNFO(fpath string) error {
-	err := os.RemoveAll(fpath)
-	if err != nil {
-		return fmt.Errorf(("Error: Cannot remove NFO Directory"))
-	}
-	err = os.Mkdir(fpath, 0755)
+	err = os.MkdirAll(fpath, 0755)
 	if err != nil {
 		return fmt.Errorf("Error: Cannot make NFO Directory")
 	}

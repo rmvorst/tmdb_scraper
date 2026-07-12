@@ -50,7 +50,9 @@ func main() {
 	// Define flags (name, default, description)
 	seasonFlag := flag.Int("season", 0, "Season Number")
 	episodeFlag := flag.Int("episode", 0, "Episode Number")
+	outputFpathFlag := flag.String("output", cfg.RootNFO, "Output Filepath Location")
 	specialsFlag := flag.Bool("specials", false, "Specials Boolean")
+	debugFlag := flag.Bool("debug", false, "Debug Boolean")
 	flag.Parse()
 	args := flag.Args()
 
@@ -79,9 +81,18 @@ func main() {
 		seasonNum -= 1
 	}
 
+	if *debugFlag {
+		fmt.Println("NFO File Folder:", cfg.RootNFO)
+		fmt.Println("API Key:", cfg.ApiKey)
+		fmt.Println("tmdbID:", tmdbID)
+	}
+
 	// Start the loop
 seasonLoop:
 	for _, season := range seasons.Seasons {
+		if *debugFlag {
+			fmt.Println("Season:", season)
+		}
 		episodeListURL := seasonListURL + "/season/" + strconv.Itoa(season.SeasonNumber)
 		episodes, err := getJSON[api.EpisodeList](episodeListURL, cfg)
 		if err != nil {
@@ -89,9 +100,18 @@ seasonLoop:
 		}
 
 		for _, episode := range episodes.Episodes {
+			if *debugFlag {
+				fmt.Println("Episode:", episode)
+				fmt.Println("Season Name:", seasons.Name)
+				fmt.Println("Episode Name:", episode.Name)
+				fmt.Println("Summary:", episode.Summary)
+				fmt.Println("Season Number:", seasonNum)
+				fmt.Println("Episode Number:", episodeNum)
+				fmt.Println("Episode ID:", episode.ID)
+			}
 			if checkFlag(seasonNum, seasonFlag) {
 				if checkFlag(episodeNum, episodeFlag) {
-					err := writers.WriteNFO(seasons.Name, episode.Name, episode.Summary, cfg.RootNFO, seasonNum, episodeNum, episode.ID)
+					err := writers.WriteNFO(seasons.Name, episode.Name, episode.Summary, *outputFpathFlag, seasonNum, episodeNum, episode.ID)
 					if err != nil {
 						log.Fatalf("Error: %v\n", err)
 					}
