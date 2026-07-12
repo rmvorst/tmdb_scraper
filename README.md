@@ -14,13 +14,17 @@ tmdb_scraper was built to fix issues that arise from Jellyfin's automated metada
 `go install github.com/rmvorst/tmbd_scraper@latest`
 
 ### Prerequisites
-User must already have a tmdb api key. This should be stored in the .env file as API_KEY
+User must already have a tmdb api key. This should be stored in the .env file as API_KEY.
+The API Key can be accessed through the TMDB user account settings: https://www.themoviedb.org/settings/api
 
 ## Usage
 
 Optional flags are:
-- '--season' - specify the season wanted to be grabbed and written to an NFO
-- '--episode' - specify the episde wanted to be grabbed and written to an NFO
+- '--season' - Specify the season wanted to be grabbed and written to an NFO. Follow this flag with the season number as an int.
+- '--episode' - Specify the episode wanted to be grabbed and written to an NFO Follow this flag with the episode number as an int.
+- '--specials' - A boolean flag that specifies there are specials listed in the TMDB database. They will be treated as Season 0. No value needs to follow this flag.
+- '--output' - A string flag that allows a user to specify the output folder. If not included, the NFOROOT in the user's config is used. The string representation of the folderpath to the desired output folder should follow this flag.
+- '--debug' - Run debug lines that describe current environment, as well as the info of the show being fetched. No value needs to follow this flag.
 
 ## Examples:
 
@@ -53,6 +57,22 @@ Optional flags are:
 28 is the number of episodes in season 1
 
 10 is the number of episodes in season 2
+
+### Read and write to an NFO the metadata of episode 10 from season 3 of the show with tmdb-id of 82684 to a defined location. There are specials in this series.
+
+`tmdb_scraper --season 3 --episode 10 --specials --output "/path/to/output" 82684 16 24 24 24 24
+
+82684 is the tmdb-id of the show being accessed
+
+16 is the number of specials
+
+24 is the number of episodes in season 1
+
+24 is the number of episodes in season 2
+
+24 is the number of episodes in season 3
+
+24 is the number of episodes in season 4
 
 ## Contributing
 
