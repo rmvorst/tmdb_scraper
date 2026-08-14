@@ -11,7 +11,7 @@ tmdb_scraper was built to fix issues that arise from Jellyfin's automated metada
 ## Quick Start
 
 ### Installation
-`go install github.com/rmvorst/tmbd_scraper@latest`
+`go install github.com/rmvorst/tmdb_scraper@latest`
 
 ### Prerequisites
 User must already have a tmdb api key. This should be stored in the .env file as API_KEY.
